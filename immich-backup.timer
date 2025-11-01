@@ -1,0 +1,16 @@
+# /etc/systemd/system/immich-backup.timer
+[Unit]
+Description=Run Immich Backup Daily
+Requires=immich-backup.service
+
+[Timer]
+# Run daily at 2 AM
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+# Randomize start time by up to 30 minutes to avoid load spikes
+RandomizedDelaySec=30m
+
+[Install]
+WantedBy=timers.target
