@@ -20,6 +20,8 @@ IMMICH_ROOT="/home/$IMMICH_USER/Immich"
 # Sync to S3 (primary sync location - always current)
 log "Syncing to S3..."
 
+cd "$IMMICH_ROOT"
+
 # Sync configuration files
 config_files=("docker-compose.yml" ".env" "hwaccel.ml.yml" "hwaccel.transcoding.yml")
 for file in "${config_files[@]}"; do
@@ -30,14 +32,7 @@ for file in "${config_files[@]}"; do
   fi
 done
 
-# # Sync media library
-# log "Syncing media library..."
-# aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
-#   --storage-class INTELLIGENT_TIERING \
-#   --delete \
-#   --no-progress
-
-# Sync PostgreSQL database
+log "Syncing PostgreSQL database..."
 
 sudo docker compose down
 
@@ -47,5 +42,12 @@ aws s3 sync "$IMMICH_ROOT/postgres/" "s3://$S3_BUCKET/latest/postgres/" \
   --no-progress
 
 sudo docker compose up -d
+
+log "Syncing media library..."
+
+# aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
+#   --storage-class INTELLIGENT_TIERING \
+#   --delete \
+#   --no-progress
 
 log "Backup completed successfully!"
