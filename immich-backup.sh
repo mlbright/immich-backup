@@ -37,4 +37,15 @@ done
 #   --delete \
 #   --no-progress
 
+# Sync PostgreSQL database
+
+sudo docker compose down
+
+aws s3 sync "$IMMICH_ROOT/postgres/" "s3://$S3_BUCKET/latest/postgres/" \
+  --storage-class INTELLIGENT_TIERING \
+  --delete \
+  --no-progress
+
+sudo docker compose up -d
+
 log "Backup completed successfully!"
