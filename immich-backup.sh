@@ -6,6 +6,7 @@ set -e
 
 # Configuration
 S3_BUCKET="${S3_BUCKET:-immich-backups}"
+IMMICH_USER="${IMMICH_USER:-immich}"
 
 # Logging
 log() {
@@ -14,7 +15,6 @@ log() {
 
 log "Starting Immich backup process..."
 
-IMMICH_USER="$(whoami)"
 IMMICH_ROOT="/home/$IMMICH_USER/Immich"
 
 # Sync to S3 (primary sync location - always current)
