@@ -45,7 +45,7 @@ sudo docker compose up -d
 
 log "Syncing media library..."
 
-aws s3 sync --delete "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
+aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
   --storage-class INTELLIGENT_TIERING \
   --delete \
   --no-progress
