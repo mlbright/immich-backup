@@ -7,8 +7,6 @@ set -e
 # Configuration
 IMMICH_USER="immich"
 IMMICH_ROOT="/home/$IMMICH_USER/Immich"
-LIBRARY="$IMMICH_ROOT/library"
-POSTGRES="$IMMICH_ROOT/postgres"
 S3_BUCKET="immich-backups"
 
 # Logging
@@ -22,16 +20,20 @@ log "Starting Immich backup process..."
 log "Syncing to S3..."
 
 # Sync configuration files
-aws s3 sync "$IMMICH_ROOT/*" "s3://$S3_BUCKET/latest" \
-  --storage-class INTELLIGENT_TIERING \
-  --delete \
-  --no-progress
+config_files=("docker-compose.yml" ".env" "hwaccel.ml.yml" "hwaccel.transcoding.yml")
+for file in "${config_files[@]}"; do
+  if [ -f "$IMMICH_ROOT/$file" ]; then
+    aws s3 cp "$IMMICH_ROOT/$file" "s3://$S3_BUCKET/latest/$file" \
+      --storage-class INTELLIGENT_TIERING \
+      --no-progress
+  fi
+done
 
-# Sync media library
-log "Syncing media library..."
-aws s3 sync "$LIBRARY/" "s3://$S3_BUCKET/latest/library/" \
-  --storage-class INTELLIGENT_TIERING \
-  --delete \
-  --no-progress
+# # Sync media library
+# log "Syncing media library..."
+# aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
+#   --storage-class INTELLIGENT_TIERING \
+#   --delete \
+#   --no-progress
 
 log "Backup completed successfully!"
