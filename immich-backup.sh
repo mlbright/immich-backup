@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-S3_BUCKET="immich-backups"
+S3_BUCKET="${S3_BUCKET:-immich-backups}"
 
 # Logging
 log() {

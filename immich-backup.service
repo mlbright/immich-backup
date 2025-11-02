@@ -8,6 +8,7 @@ Requires=docker.service
 Type=oneshot
 User=ubuntu
 Group=ubuntu
+Environment="S3_BUCKET=immich-backups"
 ExecStart=/usr/local/bin/immich-backup.sh
 StandardOutput=journal
 StandardError=journal
