@@ -45,9 +45,23 @@ sudo docker compose up -d
 
 log "Syncing media library..."
 
-aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
+if aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
   --storage-class INTELLIGENT_TIERING \
   --delete \
-  --no-progress
+  --no-progress; then
 
-log "Backup completed successfully!"
+  log "S3 sync completed successfully."
+  curl ntfy.sh \
+    -d '{
+    "topic": "'"${NTFY_TOPIC}"'",
+    "message": "Immich backup successful"
+  }'
+else
+  log "Error during S3 sync!"
+  curl ntfy.sh \
+    -d '{
+    "topic": "'"${NTFY_TOPIC}"'",
+    "message": "Immich backup FAILED"
+  }'
+  exit 1
+fi
