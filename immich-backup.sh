@@ -51,13 +51,17 @@ if aws s3 sync "$IMMICH_ROOT/library/" "s3://$S3_BUCKET/latest/library/" \
   --no-progress; then
 
   log "S3 sync completed successfully."
-  curl \
-    -d "Immich backup completed successfully!" \
-    ntfy.sh/"${NOTIFY_TOPIC}"
+  curl ntfy.sh \
+  -d '{
+    "topic": "'"${NTFY_TOPIC}"'",
+    "message": "Immich backup successful"
+  }'
 else
   log "Error during S3 sync!"
-  curl \
-    -d "Immich backup failed ..." \
-    ntfy.sh/"${NOTIFY_TOPIC}"
+  curl ntfy.sh \
+  -d '{
+    "topic": "'"${NTFY_TOPIC}"'",
+    "message": "Immich backup FAILED"
+  }'
   exit 1
 fi
